@@ -1,11 +1,17 @@
 import {setUser, readConfig} from "../config.js";
-import {createUser, getUserByName, resetUsers, getUsers} from "../lib/db/queries/users.js";
+import {createUser, getUser, resetUsers, getUsers} from "../lib/db/queries/users.js";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length !== 1) {
     throw new Error("Username is required for login command");
   }
   const userName = args[0];
+  const existingUser = await getUser(userName);
+
+  if (!existingUser) {
+    throw new Error(`User ${userName} does not exist`);
+  }
+
   setUser(userName);
   console.log(`User ${userName} logged in successfully.`);
 }
