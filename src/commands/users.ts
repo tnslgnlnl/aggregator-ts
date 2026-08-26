@@ -2,26 +2,24 @@ import {setUser, readConfig} from "../config.js";
 import {createUser, getUserByName, resetUsers, getUsers} from "../lib/db/queries/users.js";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
-  if (args.length < 1) {
+  if (args.length !== 1) {
     throw new Error("Username is required for login command");
   }
-  const existingUser = await getUserByName(args[0]);
-  if (!existingUser) {
-    throw new Error(`User ${args[0]} does not exist`);
-  }
-  setUser(args[0]);
-  console.log(`User ${args[0]} logged in successfully.`);
+  const userName = args[0];
+  setUser(userName);
+  console.log(`User ${userName} logged in successfully.`);
 }
 
 export async function handlerRegister(cmdName: string, ...args: string[]) {
-  if (args.length < 1) {
+  if (args.length !== 1) {
       throw new Error("Username is required for register command");
   }
-  const existingUser = await getUserByName(args[0]);
-    if (existingUser) {
-        throw new Error(`User ${args[0]} already exists`);
-    }
-  const newUser = await createUser(args[0]);
+
+  const userName = args[0];
+  const newUser = await createUser(userName);
+  if (!newUser) {
+    throw new Error(`User ${userName} not found`);
+  }
   setUser(newUser.name);
   console.log(`User ${newUser.name} registered and logged in successfully.`);
 }
